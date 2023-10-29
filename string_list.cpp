@@ -37,6 +37,7 @@ void replace_in_string(mString string, cString before, cString after);
 ErrorCode validate_input_string_list_ptr(StringList*);
 ErrorCode validate_input_string_list(StringList);
 ErrorCode validate_input_string(cString);
+ErrorCode validate_input_bool_ptr(bool* ptr);
 
 // Validational decorators
 
@@ -57,16 +58,23 @@ PUBLIC ErrorCode string_list_destroy(StringList* list)
     return impl_string_list_destroy(list);
 }
 
-PUBLIC bool string_list_is_empty(StringList list)
+PUBLIC ErrorCode string_list_is_empty(StringList list, bool* result)
 {
-    ErrorCode validation_error = validate_input_string_list(list);
+    ErrorCode list_validation_error = validate_input_string_list(list);
+    ErrorCode bool_ptr_validation_error = validate_input_bool_ptr(result);
 
-    if (validation_error != ErrorCode::Success)
+    if (list_validation_error != ErrorCode::Success)
     {
-        return true;
+        return list_validation_error;
     }
 
-    return impl_string_list_is_empty(list);
+    if (bool_ptr_validation_error != ErrorCode::Success)
+    {
+        return bool_ptr_validation_error;
+    }
+
+    *result = impl_string_list_is_empty(list);
+    return ErrorCode::Success;
 }
 
 PUBLIC ErrorCode string_list_add(StringList* list_ptr, cString str)
@@ -262,7 +270,7 @@ PRIVATE ErrorCode impl_string_list_add(StringList* list_ptr, cString str)
 
 PRIVATE ErrorCode impl_string_list_remove(StringList list, cString str)
 {
-    if (string_list_is_empty(list))
+    if (impl_string_list_is_empty(list))
     {
         return ErrorCode::Success;
     }
@@ -345,7 +353,7 @@ PRIVATE ErrorCode impl_string_list_replace_in_strings(StringList list, cString b
 
 PRIVATE ErrorCode impl_string_list_sort(StringList list)
 {
-    if (string_list_is_empty(list))
+    if (impl_string_list_is_empty(list))
     {
         return ErrorCode::Success;
     }
@@ -512,4 +520,9 @@ PRIVATE inline ErrorCode validate_input_string_list(StringList list)
 PRIVATE inline ErrorCode validate_input_string(cString str)
 {
     return validate_not_nullptr(str);
+}
+
+PRIVATE inline ErrorCode validate_input_bool_ptr(bool* ptr)
+{
+    return validate_not_nullptr(ptr);
 }

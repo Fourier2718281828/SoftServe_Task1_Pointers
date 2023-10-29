@@ -29,8 +29,10 @@ TEST(StringListAdditionalTest, IsNullWhenDestroyed)
 
 TEST_F(StringListFunctionalityTest, InitAndDestroy) 
 {
+    bool list_is_empty;
+    string_list_is_empty(list, &list_is_empty);
+    EXPECT_TRUE(list_is_empty);
     EXPECT_TRUE(list != nullptr);
-    EXPECT_TRUE(string_list_is_empty(list));
 }
 
 TEST_F(StringListFunctionalityTest, AddAndSize) 
@@ -46,8 +48,11 @@ TEST_F(StringListFunctionalityTest, AddAndSize)
     string_list_add(&list, str3);
     string_list_add(&list, str4);
 
+    bool list_is_empty;
+    string_list_is_empty(list, &list_is_empty);
+
+    EXPECT_FALSE(list_is_empty);
     EXPECT_EQ(expected_size, string_list_size(list));
-    EXPECT_FALSE(string_list_is_empty(list));
 
     EXPECT_STREQ(list[0], str1);
     EXPECT_STREQ(list[1], str2);

@@ -17,7 +17,7 @@ enum class ErrorCode
 ErrorCode string_list_init(StringList* list);
 ErrorCode string_list_destroy(StringList* list);
 
-bool string_list_is_empty(StringList list);
+ErrorCode string_list_is_empty(StringList list, bool* result);
 
 ErrorCode string_list_add(StringList* list, cString str);
 ErrorCode string_list_remove(StringList list, cString str);

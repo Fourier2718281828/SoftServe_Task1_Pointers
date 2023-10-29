@@ -29,7 +29,10 @@ TEST(StringListValidationDestroyTest, StringListDestroyNotNull)
 
 TEST_F(StringListValidationTest, StringListIsEmptyNotNull)
 {
-    EXPECT_TRUE(false);
+    bool list_is_empty;
+    EXPECT_EQ(string_list_is_empty(list, nullptr)          , ErrorCode::NullPointerInput);
+    EXPECT_EQ(string_list_is_empty(nullptr, &list_is_empty), ErrorCode::NullPointerInput);
+    EXPECT_NE(string_list_is_empty(list, &list_is_empty)   , ErrorCode::NullPointerInput);
 }
 
 TEST_F(StringListValidationTest, StringListAddNotNull)
