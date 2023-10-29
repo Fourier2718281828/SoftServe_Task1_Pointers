@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "string_list.hpp"
+#include "../string_list.hpp"
 
-class StringListTest : public ::testing::Test 
+class StringListFunctionalityTest : public ::testing::Test
 {
 protected:
     StringList list;
@@ -27,13 +27,13 @@ TEST(StringListAdditionalTest, IsNullWhenDestroyed)
     EXPECT_TRUE(list == nullptr);
 }
 
-TEST_F(StringListTest, InitAndDestroy) 
+TEST_F(StringListFunctionalityTest, InitAndDestroy) 
 {
     EXPECT_TRUE(list != nullptr);
     EXPECT_TRUE(string_list_is_empty(list));
 }
 
-TEST_F(StringListTest, AddAndSize) 
+TEST_F(StringListFunctionalityTest, AddAndSize) 
 {
     const cString str1 = "string_1";
     const cString str2 = "string_2";
@@ -55,7 +55,7 @@ TEST_F(StringListTest, AddAndSize)
     EXPECT_STREQ(list[3], str4);
 }
 
-TEST_F(StringListTest, Remove) 
+TEST_F(StringListFunctionalityTest, Remove) 
 {
     const cString strToRepeat = "string_1";
     const SizeType expected_size = 6u;
@@ -83,7 +83,7 @@ TEST_F(StringListTest, Remove)
     }
 }
 
-TEST_F(StringListTest, IndexOf)
+TEST_F(StringListFunctionalityTest, IndexOf)
 {
     // 1 - 5
     string_list_add(&list, "0");
@@ -106,7 +106,7 @@ TEST_F(StringListTest, IndexOf)
     }
 } 
 
-TEST_F(StringListTest, RemoveDuplicates)
+TEST_F(StringListFunctionalityTest, RemoveDuplicates)
 {
     const size_t unique_string_count = 3;
     cString unique_strings[unique_string_count] { "0", "1", "2" };
@@ -134,7 +134,7 @@ TEST_F(StringListTest, RemoveDuplicates)
     }
 }
 
-TEST_F(StringListTest, ReplaceInStrings)
+TEST_F(StringListFunctionalityTest, ReplaceInStrings)
 {
     cString before = "ab";
     cString after  = "ba";
@@ -187,8 +187,7 @@ static bool is_sorted(StringList list)
     return true;
 }
 
-
-TEST_F(StringListTest, Sort)
+TEST_F(StringListFunctionalityTest, Sort)
 {
     string_list_add(&list, "2");
     string_list_add(&list, "5");

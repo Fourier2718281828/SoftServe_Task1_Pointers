@@ -8,21 +8,187 @@
 static const SizeType INITIAL_CAPACITY = 0u;
 static const SizeType FIELDS_BLOCK_SIZE = sizeof(SizeType) << 1;
 
+// Forwarded declarations of basic implementations
+ErrorCode impl_string_list_init(StringList* list_ptr);
+ErrorCode impl_string_list_destroy(StringList* list);
+bool impl_string_list_is_empty(StringList list);
+ErrorCode impl_string_list_add(StringList* list_ptr, cString str);
+ErrorCode impl_string_list_remove(StringList list, cString str);
+SizeType impl_string_list_size(StringList list);
+SizeType impl_string_list_index_of(StringList list, cString str);
+ErrorCode impl_string_list_remove_duplicates(StringList* list);
+ErrorCode impl_string_list_replace_in_strings(StringList list, cString before, cString after);
+ErrorCode impl_string_list_sort(StringList list);
 
-PRIVATE inline size_t allocating_bytes_count(const SizeType capacity);
-PRIVATE void move_to_the_fields_block(StringList* list_ptr);
-PRIVATE void move_to_the_strings_block(StringList* list_ptr);
-PRIVATE void set_fields_block(StringList list);
-PRIVATE SizeType* get_size_ptr(StringList list);
-PRIVATE SizeType* get_capacity_ptr(StringList list);
-PRIVATE SizeType string_list_capacity(StringList list);
-PRIVATE ErrorCode extend_string_list(StringList* list_ptr, const SizeType new_capacity);
-PRIVATE inline SizeType next_capacity(const SizeType old_capacity);
-PRIVATE ErrorCode place_element(StringList list, const SizeType index, cString str);
-PRIVATE void replace_in_string(mString string, cString before, cString after);
+// Forwarded declarations of utilities
+size_t allocating_bytes_count(const SizeType capacity);
+void move_to_the_fields_block(StringList* list_ptr);
+void move_to_the_strings_block(StringList* list_ptr);
+void set_fields_block(StringList list);
+SizeType* get_size_ptr(StringList list);
+SizeType* get_capacity_ptr(StringList list);
+SizeType string_list_capacity(StringList list);
+ErrorCode extend_string_list(StringList* list_ptr, const SizeType new_capacity);
+SizeType next_capacity(const SizeType old_capacity);
+ErrorCode place_element(StringList list, const SizeType index, cString str);
+void replace_in_string(mString string, cString before, cString after);
 
+// Validators forwarded declarations
+ErrorCode validate_input_string_list_ptr(StringList*);
+ErrorCode validate_input_string_list(StringList);
+ErrorCode validate_input_string(cString);
+
+// Validational decorators
 
 PUBLIC ErrorCode string_list_init(StringList* list_ptr)
+{
+    return impl_string_list_init(list_ptr);
+}
+
+PUBLIC ErrorCode string_list_destroy(StringList* list)
+{
+    ErrorCode validation_error = validate_input_string_list_ptr(list);
+
+    if (validation_error != ErrorCode::Success)
+    {
+        return validation_error;
+    }
+
+    return impl_string_list_destroy(list);
+}
+
+PUBLIC bool string_list_is_empty(StringList list)
+{
+    ErrorCode validation_error = validate_input_string_list(list);
+
+    if (validation_error != ErrorCode::Success)
+    {
+        return true;
+    }
+
+    return impl_string_list_is_empty(list);
+}
+
+PUBLIC ErrorCode string_list_add(StringList* list_ptr, cString str)
+{
+    ErrorCode list_ptr_validation_error = validate_input_string_list_ptr(list_ptr);
+    ErrorCode string_validation_error = validate_input_string(str);
+
+    if (list_ptr_validation_error != ErrorCode::Success)
+    {
+        return list_ptr_validation_error;
+    }
+
+    if (string_validation_error != ErrorCode::Success)
+    {
+        return string_validation_error;
+    }
+
+    return impl_string_list_add(list_ptr, str);
+}
+
+PUBLIC ErrorCode string_list_remove(StringList list, cString str)
+{
+    ErrorCode list_validation_error = validate_input_string_list(list);
+    ErrorCode string_validation_error = validate_input_string(str);
+
+    if (list_validation_error != ErrorCode::Success)
+    {
+        return list_validation_error;
+    }
+
+    if (string_validation_error != ErrorCode::Success)
+    {
+        return string_validation_error;
+    }
+
+    return impl_string_list_remove(list, str);
+}
+
+PUBLIC SizeType string_list_size(StringList list)
+{
+    ErrorCode list_validation_error = validate_input_string_list(list);
+
+    if (list_validation_error != ErrorCode::Success)
+    {
+        const SizeType default_size = 0u;
+        return default_size;
+    }
+
+    return impl_string_list_size(list);
+}
+
+PUBLIC SizeType string_list_index_of(StringList list, cString str)
+{
+    ErrorCode list_validation_error = validate_input_string_list(list);
+    ErrorCode string_validation_error = validate_input_string(str);
+    const SizeType default_index = (SizeType)(-1);
+
+    if (list_validation_error != ErrorCode::Success)
+    {
+        return default_index;
+    }
+
+    if (string_validation_error != ErrorCode::Success)
+    {
+        return default_index;
+    }
+
+    return impl_string_list_index_of(list, str);
+}
+
+PUBLIC ErrorCode string_list_remove_duplicates(StringList* list)
+{
+    ErrorCode list_ptr_validation_error = validate_input_string_list_ptr(list);
+
+    if (list_ptr_validation_error != ErrorCode::Success)
+    {
+        return list_ptr_validation_error;
+    }
+
+    return impl_string_list_remove_duplicates(list);
+}
+
+PUBLIC ErrorCode string_list_replace_in_strings(StringList list, cString before, cString after)
+{
+    ErrorCode list_validation_error = validate_input_string_list(list);
+    ErrorCode string1_validation_error = validate_input_string(before);
+    ErrorCode string2_validation_error = validate_input_string(after);
+
+    if (list_validation_error != ErrorCode::Success)
+    {
+        return list_validation_error;
+    }
+
+    if (string1_validation_error != ErrorCode::Success)
+    {
+        return string1_validation_error;
+    }
+
+    if (string2_validation_error != ErrorCode::Success)
+    {
+        return string2_validation_error;
+    }
+
+    return impl_string_list_replace_in_strings(list, before, after);
+}
+
+PUBLIC ErrorCode string_list_sort(StringList list)
+{
+    ErrorCode list_validation_error = validate_input_string_list(list);
+
+    if (list_validation_error != ErrorCode::Success)
+    {
+        return list_validation_error;
+    }
+
+    return impl_string_list_sort(list);
+}
+
+
+// Actual implementations
+
+PRIVATE ErrorCode impl_string_list_init(StringList* list_ptr)
 {
     const size_t bytes_to_allocate_count = allocating_bytes_count(INITIAL_CAPACITY);
     const bool size_type_overflow_detected = bytes_to_allocate_count < INITIAL_CAPACITY ||
@@ -46,8 +212,13 @@ PUBLIC ErrorCode string_list_init(StringList* list_ptr)
     return ErrorCode::Success;
 }
 
-PUBLIC ErrorCode string_list_destroy(StringList* list)
+PRIVATE ErrorCode impl_string_list_destroy(StringList* list)
 {
+    for (SizeType i = 0u; i < string_list_size(*list); ++i)
+    {
+        free((*list)[i]);
+    }
+
     move_to_the_fields_block(list);
     free(*list);
     *list = nullptr;
@@ -55,51 +226,12 @@ PUBLIC ErrorCode string_list_destroy(StringList* list)
     return ErrorCode::Success;
 }
 
-PUBLIC bool string_list_is_empty(StringList list)
+PRIVATE bool impl_string_list_is_empty(StringList list)
 {
     return string_list_size(list) == 0u;
 }
 
-PUBLIC SizeType string_list_size(StringList list)
-{
-    return *get_size_ptr(list);
-}
-
-PUBLIC SizeType string_list_index_of(StringList list, cString str)
-{
-    for (SizeType i = 0u; i < string_list_size(list); ++i)
-    {
-        if (strcmp(list[i], str) == 0)
-        {
-            return i;
-        }
-    }
-
-    return (SizeType)(-1);
-}
-
-PUBLIC ErrorCode string_list_remove_duplicates(StringList* list)
-{
-    StringList result;
-    string_list_init(&result);
-
-    for (SizeType i = 0u; i < string_list_size(*list); ++i)
-    {
-        mString read_string = (*list)[i];
-
-        if (string_list_index_of(result, read_string) == -1)
-        {
-            string_list_add(&result, read_string);
-        }
-    }
-
-    string_list_destroy(list);
-    *list = result;
-
-    return ErrorCode::Success;
-}
-
-PUBLIC ErrorCode string_list_add(StringList* list_ptr, cString str)
+PRIVATE ErrorCode impl_string_list_add(StringList* list_ptr, cString str)
 {
     const SizeType size = string_list_size(*list_ptr);
     const SizeType capacity = string_list_capacity(*list_ptr);
@@ -128,7 +260,7 @@ PUBLIC ErrorCode string_list_add(StringList* list_ptr, cString str)
     return ErrorCode::Success;
 }
 
-PUBLIC ErrorCode string_list_remove(StringList list, cString str)
+PRIVATE ErrorCode impl_string_list_remove(StringList list, cString str)
 {
     if (string_list_is_empty(list))
     {
@@ -142,13 +274,17 @@ PUBLIC ErrorCode string_list_remove(StringList list, cString str)
 
     for (; reading_ptr != end_ptr; ++reading_ptr)
     {
-        cString read_word = *reading_ptr;
+        mString read_word = *reading_ptr;
 
         if (strcmp(read_word, str) != 0)
         {
             *writing_ptr = *reading_ptr;
             ++writing_ptr;
             ++new_size;
+        }
+        else
+        {
+            free(read_word);
         }
     }
 
@@ -158,7 +294,46 @@ PUBLIC ErrorCode string_list_remove(StringList list, cString str)
     return ErrorCode::Success;
 }
 
-PUBLIC ErrorCode string_list_replace_in_strings(StringList list, cString before, cString after)
+PRIVATE SizeType impl_string_list_size(StringList list)
+{
+    return *get_size_ptr(list);
+}
+
+PRIVATE SizeType impl_string_list_index_of(StringList list, cString str)
+{
+    for (SizeType i = 0u; i < string_list_size(list); ++i)
+    {
+        if (strcmp(list[i], str) == 0)
+        {
+            return i;
+        }
+    }
+
+    return (SizeType)(-1);
+}
+
+PRIVATE ErrorCode impl_string_list_remove_duplicates(StringList* list)
+{
+    StringList result;
+    string_list_init(&result);
+
+    for (SizeType i = 0u; i < string_list_size(*list); ++i)
+    {
+        mString read_string = (*list)[i];
+
+        if (string_list_index_of(result, read_string) == -1)
+        {
+            string_list_add(&result, read_string);
+        }
+    }
+
+    string_list_destroy(list);
+    *list = result;
+
+    return ErrorCode::Success;
+}
+
+PRIVATE ErrorCode impl_string_list_replace_in_strings(StringList list, cString before, cString after)
 {
     for (SizeType i = 0u; i < string_list_size(list); ++i)
     {
@@ -168,7 +343,7 @@ PUBLIC ErrorCode string_list_replace_in_strings(StringList list, cString before,
     return ErrorCode::Success;
 }
 
-PUBLIC ErrorCode string_list_sort(StringList list)
+PRIVATE ErrorCode impl_string_list_sort(StringList list)
 {
     if (string_list_is_empty(list))
     {
@@ -194,6 +369,8 @@ PUBLIC ErrorCode string_list_sort(StringList list)
     return ErrorCode::Success;
 }
 
+
+// Additional utilities
 
 PRIVATE inline size_t allocating_bytes_count(const SizeType capacity)
 {
@@ -290,7 +467,6 @@ PRIVATE ErrorCode place_element(StringList list, const SizeType index, cString s
     return ErrorCode::Success;
 }
 
-
 PRIVATE void replace_in_string(mString string, cString before, cString after)
 {
     const SizeType string_len = strlen(string);
@@ -311,4 +487,29 @@ PRIVATE void replace_in_string(mString string, cString before, cString after)
             i += after_len - 1;
         }
     }
+}
+
+
+// Validators implementations
+
+PRIVATE inline ErrorCode validate_not_nullptr(const void* ptr)
+{
+    return ptr == nullptr
+         ? ErrorCode::NullPointerInput
+         : ErrorCode::Success;
+}
+
+PRIVATE inline ErrorCode validate_input_string_list_ptr(StringList* list_ptr)
+{
+    return validate_not_nullptr(list_ptr);
+}
+
+PRIVATE inline ErrorCode validate_input_string_list(StringList list)
+{
+    return validate_not_nullptr(list);
+}
+
+PRIVATE inline ErrorCode validate_input_string(cString str)
+{
+    return validate_not_nullptr(str);
 }

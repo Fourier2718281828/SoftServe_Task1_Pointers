@@ -17,7 +17,8 @@ enable_testing()
 
 add_executable(
     testing
-    test.cpp
+    tests/validation_test.cpp
+    tests/functionality_test.cpp
     string_list.cpp
 )
 target_link_libraries(
