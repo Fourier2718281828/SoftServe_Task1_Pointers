@@ -63,7 +63,14 @@ TEST_F(StringListValidationTest, StringListSizeNotNull)
 
 TEST_F(StringListValidationTest, StringListIndexOfNotNull)
 {
-    EXPECT_TRUE(false);
+    SizeType index;
+    EXPECT_EQ(string_list_index_of(nullptr, nullptr, nullptr), ErrorCode::NullPointerInput);
+    EXPECT_EQ(string_list_index_of(list   , nullptr, nullptr), ErrorCode::NullPointerInput);
+    EXPECT_EQ(string_list_index_of(nullptr, "abcde", nullptr), ErrorCode::NullPointerInput);
+    EXPECT_EQ(string_list_index_of(nullptr, nullptr, &index) , ErrorCode::NullPointerInput);
+    EXPECT_EQ(string_list_index_of(list   , "abcde", nullptr), ErrorCode::NullPointerInput);
+    EXPECT_EQ(string_list_index_of(list   , nullptr, &index) , ErrorCode::NullPointerInput);
+    EXPECT_NE(string_list_index_of(list   , "abcde", &index) , ErrorCode::NullPointerInput);
 }
 
 TEST_F(StringListValidationTest, StringListRemoveDuplicatesNotNull)

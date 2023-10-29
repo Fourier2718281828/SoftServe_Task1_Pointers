@@ -133,23 +133,30 @@ PUBLIC ErrorCode string_list_size(StringList list, SizeType* result)
     return ErrorCode::Success;
 }
 
-PUBLIC SizeType string_list_index_of(StringList list, cString str)
+PUBLIC ErrorCode string_list_index_of(StringList list, cString str, SizeType* result)
 {
     ErrorCode list_validation_error = validate_input_string_list(list);
     ErrorCode string_validation_error = validate_input_string(str);
-    const SizeType default_index = (SizeType)(-1);
+    ErrorCode index_validation_error = validate_input_size_ptr(result);
 
     if (list_validation_error != ErrorCode::Success)
     {
-        return default_index;
+        return list_validation_error;
     }
 
     if (string_validation_error != ErrorCode::Success)
     {
-        return default_index;
+        return string_validation_error;
     }
 
-    return impl_string_list_index_of(list, str);
+    if (index_validation_error != ErrorCode::Success)
+    {
+        return index_validation_error;
+    }
+
+    *result = impl_string_list_index_of(list, str);
+
+    return ErrorCode::Success;
 }
 
 PUBLIC ErrorCode string_list_remove_duplicates(StringList* list)
@@ -336,7 +343,7 @@ PRIVATE ErrorCode impl_string_list_remove_duplicates(StringList* list)
     {
         mString read_string = (*list)[i];
 
-        if (string_list_index_of(result, read_string) == -1)
+        if (impl_string_list_index_of(result, read_string) == -1)
         {
             string_list_add(&result, read_string);
         }

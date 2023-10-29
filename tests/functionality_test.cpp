@@ -87,8 +87,11 @@ TEST_F(StringListFunctionalityTest, Remove)
 
     string_list_remove(list, strToRepeat);
 
+    SizeType found_index = 0u;
+    string_list_index_of(list, strToRepeat, &found_index);
+
+    EXPECT_EQ((SizeType)-1, found_index);
     EXPECT_EQ(expected_size, size_of_list(list));
-    EXPECT_EQ((SizeType)-1, string_list_index_of(list, strToRepeat));
 
     for (SizeType i = 0u; i < expected_size; ++i)
     {
@@ -114,7 +117,8 @@ TEST_F(StringListFunctionalityTest, IndexOf)
 
     for (SizeType i = 0u; i < 6u; ++i)
     {
-        const SizeType index = string_list_index_of(list, std::to_string(i).c_str());
+        SizeType index = (SizeType)(-1);
+        string_list_index_of(list, std::to_string(i).c_str(), &index);
         EXPECT_EQ(index, i);
     }
 } 
@@ -142,8 +146,9 @@ TEST_F(StringListFunctionalityTest, RemoveDuplicates)
     
     for (SizeType i = 0u; i < unique_string_count; ++i)
     {
-        const SizeType index_of_i = string_list_index_of(list, std::to_string(i).c_str());
-        EXPECT_NE(index_of_i, (SizeType) -1);
+        SizeType index = 0u;
+        string_list_index_of(list, std::to_string(i).c_str(), &index);
+        EXPECT_NE(index, (SizeType)(-1));
     }
 }
 

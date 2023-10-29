@@ -23,7 +23,7 @@ ErrorCode string_list_add(StringList* list, cString str);
 ErrorCode string_list_remove(StringList list, cString str);
 
 ErrorCode string_list_size(StringList list, SizeType* result);
-SizeType string_list_index_of(StringList list, cString str);
+ErrorCode string_list_index_of(StringList list, cString str, SizeType* result);
 
 ErrorCode string_list_remove_duplicates(StringList* list);
 ErrorCode string_list_replace_in_strings(StringList list, cString before, cString after);
