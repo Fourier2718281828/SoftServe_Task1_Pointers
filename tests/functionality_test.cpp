@@ -35,6 +35,14 @@ TEST_F(StringListFunctionalityTest, InitAndDestroy)
     EXPECT_TRUE(list != nullptr);
 }
 
+SizeType size_of_list(StringList list)
+{
+    SizeType size = 0u;
+    string_list_size(list, &size);
+
+    return size;
+}
+
 TEST_F(StringListFunctionalityTest, AddAndSize) 
 {
     const cString str1 = "string_1";
@@ -52,7 +60,7 @@ TEST_F(StringListFunctionalityTest, AddAndSize)
     string_list_is_empty(list, &list_is_empty);
 
     EXPECT_FALSE(list_is_empty);
-    EXPECT_EQ(expected_size, string_list_size(list));
+    EXPECT_EQ(expected_size, size_of_list(list));
 
     EXPECT_STREQ(list[0], str1);
     EXPECT_STREQ(list[1], str2);
@@ -79,7 +87,7 @@ TEST_F(StringListFunctionalityTest, Remove)
 
     string_list_remove(list, strToRepeat);
 
-    EXPECT_EQ(expected_size, string_list_size(list));
+    EXPECT_EQ(expected_size, size_of_list(list));
     EXPECT_EQ((SizeType)-1, string_list_index_of(list, strToRepeat));
 
     for (SizeType i = 0u; i < expected_size; ++i)
@@ -130,7 +138,7 @@ TEST_F(StringListFunctionalityTest, RemoveDuplicates)
 
     string_list_remove_duplicates(&list);
 
-    EXPECT_EQ(string_list_size(list), unique_string_count);
+    EXPECT_EQ(size_of_list(list), unique_string_count);
     
     for (SizeType i = 0u; i < unique_string_count; ++i)
     {
@@ -176,7 +184,7 @@ TEST_F(StringListFunctionalityTest, ReplaceInStrings)
 
 static bool is_sorted(StringList list)
 {
-    const SizeType size = string_list_size(list);
+    const SizeType size = size_of_list(list);
     if (size <= 1) 
     {
         return true;

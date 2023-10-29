@@ -55,7 +55,10 @@ TEST_F(StringListValidationTest, StringListRemoveNotNull)
 
 TEST_F(StringListValidationTest, StringListSizeNotNull)
 {
-    EXPECT_TRUE(false);
+    SizeType list_size;
+    EXPECT_EQ(string_list_size(list, nullptr)      , ErrorCode::NullPointerInput);
+    EXPECT_EQ(string_list_size(nullptr, &list_size), ErrorCode::NullPointerInput);
+    EXPECT_NE(string_list_size(list, &list_size)   , ErrorCode::NullPointerInput);
 }
 
 TEST_F(StringListValidationTest, StringListIndexOfNotNull)

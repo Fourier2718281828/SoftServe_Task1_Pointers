@@ -38,6 +38,7 @@ ErrorCode validate_input_string_list_ptr(StringList*);
 ErrorCode validate_input_string_list(StringList);
 ErrorCode validate_input_string(cString);
 ErrorCode validate_input_bool_ptr(bool* ptr);
+ErrorCode validate_input_size_ptr(SizeType* ptr);
 
 // Validational decorators
 
@@ -113,17 +114,23 @@ PUBLIC ErrorCode string_list_remove(StringList list, cString str)
     return impl_string_list_remove(list, str);
 }
 
-PUBLIC SizeType string_list_size(StringList list)
+PUBLIC ErrorCode string_list_size(StringList list, SizeType* result)
 {
     ErrorCode list_validation_error = validate_input_string_list(list);
+    ErrorCode size_validation_error = validate_input_size_ptr(result);
 
     if (list_validation_error != ErrorCode::Success)
     {
-        const SizeType default_size = 0u;
-        return default_size;
+        return list_validation_error;
     }
 
-    return impl_string_list_size(list);
+    if (size_validation_error != ErrorCode::Success)
+    {
+        return size_validation_error;
+    }
+
+    *result = impl_string_list_size(list);
+    return ErrorCode::Success;
 }
 
 PUBLIC SizeType string_list_index_of(StringList list, cString str)
@@ -222,7 +229,7 @@ PRIVATE ErrorCode impl_string_list_init(StringList* list_ptr)
 
 PRIVATE ErrorCode impl_string_list_destroy(StringList* list)
 {
-    for (SizeType i = 0u; i < string_list_size(*list); ++i)
+    for (SizeType i = 0u; i < impl_string_list_size(*list); ++i)
     {
         free((*list)[i]);
     }
@@ -236,12 +243,12 @@ PRIVATE ErrorCode impl_string_list_destroy(StringList* list)
 
 PRIVATE bool impl_string_list_is_empty(StringList list)
 {
-    return string_list_size(list) == 0u;
+    return impl_string_list_size(list) == 0u;
 }
 
 PRIVATE ErrorCode impl_string_list_add(StringList* list_ptr, cString str)
 {
-    const SizeType size = string_list_size(*list_ptr);
+    const SizeType size = impl_string_list_size(*list_ptr);
     const SizeType capacity = string_list_capacity(*list_ptr);
 
     if (size == capacity)
@@ -277,7 +284,7 @@ PRIVATE ErrorCode impl_string_list_remove(StringList list, cString str)
 
     StringList writing_ptr = list;
     StringList reading_ptr = list;
-    StringList end_ptr = list + string_list_size(list);
+    StringList end_ptr = list + impl_string_list_size(list);
     SizeType new_size = 0u;
 
     for (; reading_ptr != end_ptr; ++reading_ptr)
@@ -309,7 +316,7 @@ PRIVATE SizeType impl_string_list_size(StringList list)
 
 PRIVATE SizeType impl_string_list_index_of(StringList list, cString str)
 {
-    for (SizeType i = 0u; i < string_list_size(list); ++i)
+    for (SizeType i = 0u; i < impl_string_list_size(list); ++i)
     {
         if (strcmp(list[i], str) == 0)
         {
@@ -325,7 +332,7 @@ PRIVATE ErrorCode impl_string_list_remove_duplicates(StringList* list)
     StringList result;
     string_list_init(&result);
 
-    for (SizeType i = 0u; i < string_list_size(*list); ++i)
+    for (SizeType i = 0u; i < impl_string_list_size(*list); ++i)
     {
         mString read_string = (*list)[i];
 
@@ -343,7 +350,7 @@ PRIVATE ErrorCode impl_string_list_remove_duplicates(StringList* list)
 
 PRIVATE ErrorCode impl_string_list_replace_in_strings(StringList list, cString before, cString after)
 {
-    for (SizeType i = 0u; i < string_list_size(list); ++i)
+    for (SizeType i = 0u; i < impl_string_list_size(list); ++i)
     {
         replace_in_string(list[i], before, after);
     }
@@ -358,10 +365,10 @@ PRIVATE ErrorCode impl_string_list_sort(StringList list)
         return ErrorCode::Success;
     }
 
-    for (SizeType i = 0u; i < string_list_size(list) - 1; ++i)
+    for (SizeType i = 0u; i < impl_string_list_size(list) - 1; ++i)
     {
         SizeType min_index = i;
-        for (SizeType j = i + 1; j < string_list_size(list); ++j)
+        for (SizeType j = i + 1; j < impl_string_list_size(list); ++j)
         {
             if (strcmp(list[j], list[min_index]) < 0)
             {
@@ -523,6 +530,11 @@ PRIVATE inline ErrorCode validate_input_string(cString str)
 }
 
 PRIVATE inline ErrorCode validate_input_bool_ptr(bool* ptr)
+{
+    return validate_not_nullptr(ptr);
+}
+
+PRIVATE inline ErrorCode validate_input_size_ptr(SizeType* ptr)
 {
     return validate_not_nullptr(ptr);
 }
